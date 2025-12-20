@@ -1,106 +1,164 @@
-# Topic Integration in Blackjack JavaFX
+How to Play
 
-## Topic 1: Java overview, JVM, OOP concepts
-- **Where**: Throughout the project, especially in `Card.java`, `Deck.java`, `Player.java`, `Dealer.java`, and `BlackjackGUI.java`  
-- **Demonstrated**: Object-Oriented Programming: The project models real-world entities like cards, decks, players, and dealers. Encapsulation: Private fields with public getters/setters. Abstraction: Common behavior for players is represented in the `Player` class, extended by `Dealer`.  
-- **Example**: `Player` class with private fields `hand` and `chips` and public methods `addCard()`, `handValue()`, and `getChips()`.  
+Enter a bet amount and press Enter
+Click "Hit" to draw another card
+Click "Stand" to end your turn
+Dealer draws cards until they reach 17 or higher
+Your chips are automatically saved when you close the game
 
-## Topic 2: Variables, types, input/output
-- **Where**: `BlackjackGUI.java`, `Player.java`, `Dealer.java`  
-- **Demonstrated**: Primitive types: `int` for chip amounts, `boolean` for game state flags. Reference types: `String`, `ArrayList<Card>`, `List<Card>`. Input: Text input for bets via JavaFX TextFields. Output: JavaFX labels and console logs to display hand values, chips, and game results.  
-- **Example**: `private int chips;` in `Player.java`, `TextField betInput = new TextField();` in `BlackjackGUI.java`.  
+Features
 
-## Topic 3: Control flow: if, switch, loops
-- **Where**: `BlackjackGUI.java`, `Player.java`, `Dealer.java`  
-- **Demonstrated**: If-else statements: Checking busts, blackjack, or win conditions. Switch statements: Optional, e.g., handling player choices like “hit” or “stand”. Loops: Iterating over hands in arrays/ArrayLists to calculate totals and display cards.  
-- **Example**: `for (Card c : hand) total += c.getValue();` in `Player.handValue()`.  
+Chip persistence across sessions
+Automatic deck reshuffling
+Blackjack detection (21 with 2 cards)
+Dealer AI follows standard casino rules (must hit until 17)
 
-## Topic 4: Exceptions (intro), debugging
-- **Where**: `BlackjackGUI.java`  
-- **Demonstrated**: Throwing exceptions for invalid bet amounts. Handling invalid input with try-catch blocks.  
-- **Example**: 
-try {
-    int bet = Integer.parseInt(betInput.getText());
-} catch (NumberFormatException e) {
-    showAlert("Invalid bet amount");
+
+Topic Integration in Blackjack JavaFX
+Topic 1: Java overview, JVM, OOP concepts
+
+Where: Throughout the project, especially in Card.java, Deck.java, Player.java, Dealer.java, and BlackjackGame.java
+Demonstrated: Object-Oriented Programming: The project models real-world entities like cards, decks, players, and dealers. Encapsulation: Private fields with public getters/setters. Abstraction: Common behavior for participants is represented in the Participant abstract class, extended by Player and Dealer.
+Example: Player class with private fields name and chips and public methods adjustChips() and getChips().
+
+Topic 2: Variables, types, input/output
+
+Where: BlackjackGame.java, Player.java, Dealer.java
+Demonstrated: Primitive types: int for chip amounts and bet values. Reference types: String, Card[], TextArea, TextField. Input: Text input for bets via JavaFX TextField. Output: JavaFX TextArea to display hand values, chips, and game results.
+Example: private int chips; in Player.java, TextField betField = new TextField(); in BlackjackGame.java.
+
+Topic 3: Control flow: if, switch, loops
+
+Where: BlackjackGame.java, Player.java, Dealer.java, Deck.java
+Demonstrated: If-else statements: Checking busts, blackjack, or win conditions. Loops: for loops to iterate over card arrays and calculate hand totals, while loop for dealer AI hitting until 17.
+Example:
+
+javawhile (dealer.handValue() < 17) {
+    dealer.addCard(deck.dealCard());
 }
+Topic 4: Exceptions (intro), debugging
 
-## Topic 5: Methods, parameters, blocks, scope
-- **Where**: All class files  
-- **Demonstrated**: Methods with parameters like `addCard(Card c)`, `handValue()`, and `placeBet(int amount)`. Scope is demonstrated with local variables inside methods and instance variables at the class level. Methods are structured with clear blocks to perform single responsibilities.  
-- **Example**: 
-public int handValue() {
+Where: BlackjackGame.java
+Demonstrated: Handling invalid input with try-catch blocks for file I/O. Input validation prevents NumberFormatException by using regex matching.
+Example:
+
+javatry (BufferedReader in = new BufferedReader(new FileReader(saveFile))) {
+    return Integer.parseInt(in.readLine());
+} catch (Exception e) {
+    return 100;
+}
+Topic 5: Methods, parameters, blocks, scope
+
+Where: All class files
+Demonstrated: Methods with parameters like addCard(Card card), handValue(), and adjustChips(int amount). Scope is demonstrated with local variables inside methods and instance variables at the class level. Methods are structured with clear blocks to perform single responsibilities.
+Example:
+
+javapublic int handValue() {
     int total = 0;
-    for (Card c : hand) {
-        total += c.getValue();
+    int aceCount = 0;
+    for (int i = 0; i < handSize; i++) {
+        total += hand[i].getValue();
+        if (hand[i].getRank().equals("Ace")) {
+            aceCount++;
+        }
+    }
+    while (total > 21 && aceCount > 0) {
+        total -= 10;
+        aceCount--;
     }
     return total;
 }
-## Topic 6: Arrays & ArrayLists
-- **Where**: Player.java, Dealer.java, Deck.java  
-- **Demonstrated**: ArrayList initialization and manipulation (ArrayList<Card> hand). Iteration over hands to calculate totals or display cards. Adding and removing cards dynamically during gameplay.  
-- **Example**: 
-hand.add(newCard);
-for (Card c : hand) {
-    System.out.println(c);
+Topic 6: Arrays & ArrayLists
+
+Where: Participant.java, Dealer.java, Deck.java
+Demonstrated: Array initialization and manipulation (Card[] hand, Card[] cards). Iteration over arrays to calculate totals or display cards. Adding cards dynamically during gameplay using array indexing.
+Example:
+
+javaprotected Card[] hand = new Card[12];
+protected int handSize = 0;
+
+public void addCard(Card card) {
+    hand[handSize++] = card;
 }
-## Topic 7: Objects & classes
-- **Where**: All Java files  
-- **Demonstrated**: Class declarations for each entity (Card, Deck, Player, Dealer). Object instantiation like `Player player = new Player(100);`. Constructors set up decks, players, and initial hands.  
-- **Example**: 
-Dealer dealer = new Dealer();
+Topic 7: Objects & classes
+
+Where: All Java files
+Demonstrated: Class declarations for each entity (Card, Deck, Player, Dealer, Participant). Object instantiation like Player player = new Player("Player", 100);. Constructors set up decks, players, and initial hands.
+Example:
+
+javaDealer dealer = new Dealer();
 Deck deck = new Deck();
-Player player = new Player(500);
-## Topic 8: Abstract classes & interfaces
-- **Where**: Player.java and Dealer.java  
-- **Demonstrated**: `Dealer` extends `Player`, reusing player methods and overriding behavior such as automatic hits until hand value reaches 17. Demonstrates method overriding and polymorphism.  
-- **Example**: 
-public class Dealer extends Player {
-    @Override
+Player player = new Player("Player", 500);
+Topic 8: Abstract classes & interfaces
+
+Where: Participant.java, Player.java, and Dealer.java
+Demonstrated: Participant is an abstract class with common behavior for both players and dealers. Dealer and Player extend Participant, reusing methods like addCard() and handValue(). Demonstrates inheritance and method reuse.
+Example:
+
+javapublic abstract class Participant {
+    protected Card[] hand = new Card[12];
+    protected int handSize = 0;
+    
+    public void addCard(Card card) {
+        hand[handSize++] = card;
+    }
+    
+    public int handValue() {
+        // implementation
+    }
+}
+
+public class Dealer extends Participant {
     public void playTurn(Deck deck) {
         while (handValue() < 17) {
-            addCard(deck.draw());
+            addCard(deck.dealCard());
         }
     }
 }
-## Topic 9: Files
-- **Where**: BlackjackGUI.java  
-- **Demonstrated**: Saving and loading player chips using `BufferedReader` and `BufferedWriter`. Handling file I/O exceptions with try-catch blocks. File persistence allows the player to continue their chips after closing the game.  
-- **Example**: 
-Path saveFile = Paths.get("playerChips.txt");
-try (BufferedWriter writer = Files.newBufferedWriter(saveFile)) {
-    writer.write(String.valueOf(player.getChips()));
-} catch (IOException e) {
-    e.printStackTrace();
+Topic 9: Files
+
+Where: BlackjackGame.java
+Demonstrated: Saving and loading player chips using BufferedReader and PrintWriter with FileReader and FileWriter. Handling file I/O exceptions with try-catch blocks. File persistence allows the player to continue their chips after closing the game.
+Example:
+
+javaprivate void saveChips() {
+    try (PrintWriter out = new PrintWriter(new FileWriter(saveFile))) {
+        out.println(player.getChips());
+    } catch (IOException ignored) {}
 }
-## Topic 10: JavaFX
-- **Where**: BlackjackGUI.java  
-- **Demonstrated**: JavaFX Application lifecycle using `start(Stage primaryStage)`. UI components include Buttons, Labels, TextFields, HBox/VBox, and Alerts. Event handling for player actions like "Hit", "Stand", and "Bet". Scene and Stage management with dynamic updates to the UI.  
-- **Example**: 
-hitButton.setOnAction(e -> playerHits());
-standButton.setOnAction(e -> dealerTurn());
-betButton.setOnAction(e -> placeBet());
-## Topic 11: Robustness & coding standards
-- **Where**: All files  
-- **Demonstrated**: Input validation for bets, proper exception handling for invalid input or file errors. Clear variable names and consistent indentation. Separation of concerns: GUI class handles interface, game logic resides in Player/Dealer/Deck classes.  
-- **Example**: 
-if (bet > player.getChips()) {
-    showAlert("Not enough chips");
+
+private int loadChips() {
+    if (!saveFile.exists()) return 100;
+    try (BufferedReader in = new BufferedReader(new FileReader(saveFile))) {
+        return Integer.parseInt(in.readLine());
+    } catch (Exception e) {
+        return 100;
+    }
+}
+Topic 10: JavaFX
+
+Where: BlackjackGame.java
+Demonstrated: JavaFX Application lifecycle using start(Stage stage). UI components include Buttons, Labels, TextFields, TextArea, HBox/VBox layouts. Event handling for player actions like "Hit", "Stand", and bet submission. Scene and Stage management with dynamic updates to the UI.
+Example:
+
+javahitButton.setOnAction(e -> handlePlayerHit());
+standButton.setOnAction(e -> handlePlayerStand());
+betField.setOnAction(e -> handleBetSubmission());
+Topic 11: Robustness & coding standards
+
+Where: All files
+Demonstrated: Input validation for bets using regex matching, proper exception handling for invalid input or file errors. Clear variable names and consistent indentation. Separation of concerns: GUI class handles interface, game logic resides in Player/Dealer/Deck classes.
+Example:
+
+javaif (betText.isEmpty() || !betText.matches("\\d+")) {
+    appendLog("Enter a valid bet amount.");
     return;
 }
-## Topic 12: Multithreading
-- **Where**: Optional background autosave in BlackjackGUI.java  
-- **Demonstrated**: Background thread periodically saves chips to file without freezing the UI. Uses `Platform.runLater()` to update UI safely from threads. Thread runs continuously while the application is active.  
-- **Example**: 
-Thread autosaveThread = new Thread(() -> {
-    while (running) {
-        saveChips();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-});
-autosaveThread.setDaemon(true);
-autosaveThread.start();
+if (currentBet > player.getChips()) {
+    appendLog("You do not have enough chips.");
+}
+Topic 12: Multithreading
+
+Where: Removed from final implementation
+Demonstrated: Originally included background autosave using ScheduledExecutorService, but was removed to comply with course requirements (no java.util.concurrent until CISC191). Chips are now saved only when the game closes via stop() method.
+Note: Multithreading feature was intentionally removed to meet course guidelines.
