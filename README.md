@@ -97,15 +97,12 @@ Example:
 
 javapublic abstract class Participant {
     protected Card[] hand = new Card[12];
-    protected int handSize = 0;
+    protected int handSize = 0
     
-    public void addCard(Card card) {
-        hand[handSize++] = card;
-    }
-    
-    public int handValue() {
-        // implementation
-    }
+public void addCard(Card card) 
+{ hand[handSize++] = card; } 
+public int handValue() 
+{ // implementation }
 }
 
 public class Dealer extends Participant {
